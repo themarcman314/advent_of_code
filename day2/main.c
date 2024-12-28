@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SAFE 1
+#define SAFE 1000
 #define UNSAFE -1
 
 #define INCREASING 1
@@ -10,7 +10,8 @@
 int max_size_of_line(FILE *f);
 int num_of_lines(FILE *f);
 void fill_line(FILE *f, int *line_array, int line_size);
-int inc_decr_safety(int *line_array, int line_size);
+int check_safety(int *line_array, int line_size, int unsafe_value_used);
+void rewrite_line(int *line, int index_to_remove, int size_of_line);
 
 int main(void)
 {
@@ -41,6 +42,8 @@ int main(void)
 	char c = 'a';
 	int rank = 0;
 	int line = 0;
+	int unsafe_value_used = 0;
+	int safety = 0;
 
 
 	for(int i = 0; i < lines; i++)
@@ -55,9 +58,12 @@ int main(void)
 		{
 			printf("%d\t", data[j][i]);
 		}
-		printf("safety : %d\n", inc_decr_safety(data[j], lines));
-		if(inc_decr_safety(data[j], lines) == SAFE)
+		printf("safety : %d\n", check_safety(data[j], max_size_line, unsafe_value_used));
+		safety = check_safety(data[j], max_size_line, unsafe_value_used);
+		if(safety == SAFE)
+		{
 			number_of_safe_vales++;
+		}
 	}
 	
 
@@ -67,7 +73,8 @@ int main(void)
 
 	printf("number of safe values = %d\n", number_of_safe_vales);
 
-	//printf("safety : %d\n", inc_decr_safety(data[18], lines));
+	rewrite_line(data[0], 7, max_size_line);
+
 	return 0;
 }
 
@@ -135,24 +142,19 @@ void fill_line(FILE *f, int *line_array, int line_size)
 		}
 	}
 }
-int inc_decr_safety(int *line_array, int line_size)
+int check_safety(int *line_array, int line_size, int unsafe_value_used)
 {
-	int safety_status = 0;
 	int tendancy = 0;
 	int a, b;
-	int index = 0;
-	int check_num = 0;
 
-	while(index != line_size-2)
+	for(int index = 0; index  <= line_size -2; index++)
 	{
 		a = line_array[index];
 		b = line_array[index+1];
 		if(b < 0)
-			break;
-		//printf("check num : %d\n", check_num++);
-		//printf("index = %d\n",index);
-		//printf("a = %d\n",a);
-		//printf("b = %d\n",b);
+		{
+			continue;
+		}
 		if(tendancy == 0)
 		{
 			if(a<b)
@@ -163,18 +165,68 @@ int inc_decr_safety(int *line_array, int line_size)
 		else
 		{
 			if(a<b && tendancy == DECREASING)
+			{
 				return UNSAFE;
+			}
 			else if(a>b && tendancy == INCREASING)
+			{
 				return UNSAFE;
+			}
 		}
 		if(a == b)
+		{
 			return UNSAFE;
+		}
 		int diff = abs(a-b);
 		if(diff>3)
+		{
 			return UNSAFE;
-
-		index++;
-
+		}
 	}
 	return SAFE;
+}
+
+/*
+ * returns -1 if could not find any safe combination
+ */
+int rewrite_line_and_check_safety(int *line, int size_of_line)
+{
+	return 0;
+}
+
+void rewrite_line(int *line, int index_to_remove, int size_of_line)
+{
+	int new_buf[size_of_line];
+	int old_buf_index = 0;
+	
+	// initialise new buffer
+	for(int i = 0; i < size_of_line; i++)
+	{
+		new_buf[i] = -1;
+	}
+	for(int new_buf_index = 0; new_buf_index < size_of_line; new_buf_index++)
+	{
+		if(old_buf_index == index_to_remove)
+		{
+			old_buf_index++;
+			new_buf[new_buf_index] = line[old_buf_index];
+		}
+		else if(old_buf_index < size_of_line)
+		{
+			new_buf[new_buf_index] = line[old_buf_index];
+		}
+		old_buf_index++;
+	}
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	for(int i = 0; i < size_of_line; i++)
+	{
+		printf("%d\n", line[i]);
+	}
+	printf("\n");
+	for(int i = 0; i < size_of_line; i++)
+	{
+		printf("%d\n", new_buf[i]);
+	}
 }
