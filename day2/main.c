@@ -170,7 +170,7 @@ int inc_decr_safety(int *line_array, int line_size)
 		if(a == b)
 			return UNSAFE;
 		int diff = abs(a-b);
-		if(1<diff || diff>3)
+		if(diff>3)
 			return UNSAFE;
 
 		index++;
