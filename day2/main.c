@@ -73,7 +73,7 @@ int main(void)
 
 	printf("number of safe values = %d\n", number_of_safe_vales);
 
-	rewrite_line(data[0], 7, max_size_line);
+	rewrite_line(data[5], 7, max_size_line);
 
 	return 0;
 }
@@ -206,7 +206,9 @@ void rewrite_line(int *line, int index_to_remove, int size_of_line)
 	}
 	for(int new_buf_index = 0; new_buf_index < size_of_line; new_buf_index++)
 	{
-		if(old_buf_index == index_to_remove)
+
+		if(old_buf_index == index_to_remove && old_buf_index == size_of_line-1);
+		else if(old_buf_index == index_to_remove)
 		{
 			old_buf_index++;
 			new_buf[new_buf_index] = line[old_buf_index];
