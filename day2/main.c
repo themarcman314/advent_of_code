@@ -10,8 +10,9 @@
 int max_size_of_line(FILE *f);
 int num_of_lines(FILE *f);
 void fill_line(FILE *f, int *line_array, int line_size);
-int check_safety(int *line_array, int line_size, int unsafe_value_used);
-void rewrite_line(int *line, int index_to_remove, int size_of_line);
+int check_safety(int *line_array, int line_size);
+void rewrite_line(int *line, int *newline, int index_to_remove, int size_of_line);
+int rewrite_line_and_check_safety(int *line, int size_of_line);
 
 int main(void)
 {
@@ -44,6 +45,7 @@ int main(void)
 	int line = 0;
 	int unsafe_value_used = 0;
 	int safety = 0;
+	int other_safe = 0;
 
 
 	for(int i = 0; i < lines; i++)
@@ -58,22 +60,35 @@ int main(void)
 		{
 			printf("%d\t", data[j][i]);
 		}
-		printf("safety : %d\n", check_safety(data[j], max_size_line, unsafe_value_used));
-		safety = check_safety(data[j], max_size_line, unsafe_value_used);
+		printf("safety : %d\n", check_safety(data[j], max_size_line));
+		safety = check_safety(data[j], max_size_line);
 		if(safety == SAFE)
 		{
 			number_of_safe_vales++;
 		}
+		else
+		{
+			printf("\n");
+			printf("\n");
+			if(rewrite_line_and_check_safety(data[j], max_size_line) == 0)
+				other_safe++;
+		}
 	}
 	
-
-	printf("\n");
 	printf("\n");
 	printf("\n");
 
-	printf("number of safe values = %d\n", number_of_safe_vales);
+	printf("other safe : %d\n", other_safe);
 
-	rewrite_line(data[5], 7, max_size_line);
+	printf("total safe : %d\n", other_safe+number_of_safe_vales);
+
+
+	
+
+
+	//printf("number of safe values = %d\n", number_of_safe_vales);
+
+	//rewrite_line(data[5], 7, max_size_line);
 
 	return 0;
 }
@@ -142,7 +157,7 @@ void fill_line(FILE *f, int *line_array, int line_size)
 		}
 	}
 }
-int check_safety(int *line_array, int line_size, int unsafe_value_used)
+int check_safety(int *line_array, int line_size)
 {
 	int tendancy = 0;
 	int a, b;
@@ -191,44 +206,54 @@ int check_safety(int *line_array, int line_size, int unsafe_value_used)
  */
 int rewrite_line_and_check_safety(int *line, int size_of_line)
 {
-	return 0;
+	int safety = 0;
+	int new_buf[size_of_line];
+
+	// rewrite the line by erasing every possible number and check for safety every time
+	for(int i = 0; i < size_of_line; i++)
+	{
+		rewrite_line(line, new_buf, i, size_of_line);
+		safety = check_safety(new_buf, size_of_line);
+		if(safety == SAFE)
+		{
+			printf("line safe with line %d removed\n", i);
+			return 0;
+		}
+		else safety = UNSAFE;
+		printf("\n");
+	}
+	if(safety == UNSAFE)
+	{
+		printf("safe combination not found\n");
+	}
+	return -1;
 }
 
-void rewrite_line(int *line, int index_to_remove, int size_of_line)
+void rewrite_line(int *line, int *newline, int index_to_remove, int size_of_line)
 {
-	int new_buf[size_of_line];
 	int old_buf_index = 0;
 	
 	// initialise new buffer
 	for(int i = 0; i < size_of_line; i++)
 	{
-		new_buf[i] = -1;
+		newline[i] = -1;
 	}
 	for(int new_buf_index = 0; new_buf_index < size_of_line; new_buf_index++)
 	{
-
 		if(old_buf_index == index_to_remove && old_buf_index == size_of_line-1);
 		else if(old_buf_index == index_to_remove)
 		{
 			old_buf_index++;
-			new_buf[new_buf_index] = line[old_buf_index];
+			newline[new_buf_index] = line[old_buf_index];
 		}
 		else if(old_buf_index < size_of_line)
 		{
-			new_buf[new_buf_index] = line[old_buf_index];
+			newline[new_buf_index] = line[old_buf_index];
 		}
 		old_buf_index++;
 	}
-	printf("\n");
-	printf("\n");
-	printf("\n");
 	for(int i = 0; i < size_of_line; i++)
 	{
-		printf("%d\n", line[i]);
-	}
-	printf("\n");
-	for(int i = 0; i < size_of_line; i++)
-	{
-		printf("%d\n", new_buf[i]);
+		printf("%d\t", newline[i]);
 	}
 }
