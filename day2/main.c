@@ -89,6 +89,8 @@ int main(void)
 	//printf("number of safe values = %d\n", number_of_safe_vales);
 
 	//rewrite_line(data[5], 7, max_size_line);
+	
+	fclose(f);
 
 	return 0;
 }
