@@ -3,7 +3,7 @@
 #include <string.h>
 
 int total_number_of_chars(FILE *f);
-int detect_char_sequence(char *);
+int *find_char_sequences(char *);
 int multiply(int *);
 int add_total(int *);
 
@@ -38,7 +38,7 @@ int main(void)
 	printf("\n");
 	printf("\n");
 
-	detect_char_sequence(data);
+	find_char_sequences(data);
 
 
 
@@ -61,11 +61,13 @@ int total_number_of_chars(FILE *f)
 	return number_of_chars;
 }
 
-int detect_char_sequence(char *data)
+int *find_char_sequences(char *data)
 {
 	char sequence[] = "mul(";
 	int char_in_seq = 0;
 	int rank_of_first_num = 0;
+	int index = 0;
+	int size_of_num = 0;
 
 
 	// look for sequence for every character
@@ -88,8 +90,24 @@ int detect_char_sequence(char *data)
 		{
 			rank_of_first_num = i+char_in_seq;
 			printf("first number positioned at %d\n", rank_of_first_num);
+			while(data[rank_of_first_num+index] != ',')
+			{
+				printf("character found : %c\n",data[rank_of_first_num+index]);
+				index++;
+			}
+			size_of_num = index;
+			index = 0;
+			printf("size of first number : %d\n",size_of_num);
+			while(data[rank_of_first_num+size_of_num+index+1] != ')')
+			{
+				printf("character found : %c\n",data[rank_of_first_num+size_of_num+index+1]);
+				index++;
+			}
+			size_of_num = index;
+			printf("size of second number : %d\n",size_of_num);
+			size_of_num = 0;
+			index = 0;
 		}
 	}
-
-	return rank_of_first_num;
+	return NULL;
 }
