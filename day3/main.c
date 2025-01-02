@@ -3,6 +3,10 @@
 #include <string.h>
 #include <math.h>
 
+
+#define ACTIVATED 1
+#define DISACTIVATED 0
+
 int total_number_of_chars(FILE *f);
 int is_digit(char c);
 int str_to_int(const char *str, int idx);
@@ -99,9 +103,30 @@ int parse_mul(const char *data, const int idx, int *first_number, int *second_nu
 	int potential_first_number = 0;
 	int potential_second_number = 0;
 
-	// detect basic patern
-	if(data[idx] != 'm' ||data[idx+1] != 'u' ||data[idx+2] != 'l' ||data[idx+3] != '(')
+	static int mode = ACTIVATED;
+
+	
+	if(data[idx] == 'd' && data[idx+1] == 'o' && data[idx+2] == '(' && data[idx+3] == ')')
+	{
+		printf("activated\n");
+		mode = ACTIVATED;
 		return -1;
+	}
+
+	else if(data[idx] == 'd' && data[idx+1] == 'o' && data[idx+2] == 'n' && data[idx+3] == '\'' && data[idx+4] == 't'&& data[idx+5] == '(' && data[idx+6] == ')')
+	{
+		printf("disactivated\n");
+		mode = DISACTIVATED;
+		return -1;
+	}
+
+	// detect basic patern
+	else if(data[idx] != 'm' ||data[idx+1] != 'u' ||data[idx+2] != 'l' ||data[idx+3] != '(')
+		return -1;
+
+	if(mode == DISACTIVATED)
+		return -1;
+
 	int first_number_idx = idx+4;
 	//printf("first number idx : %d\n", first_number_idx);
 	potential_first_number = str_to_int(data, first_number_idx);
@@ -116,6 +141,7 @@ int parse_mul(const char *data, const int idx, int *first_number, int *second_nu
 	// if there isnt a ',' immediately after the first number return error
 	if(data[first_number_idx+size_of_number] != ',')
 		return -1;
+
 
 	int second_number_idx = first_number_idx+size_of_number+1;
 	//printf("second number idx : %d\n", second_number_idx);
