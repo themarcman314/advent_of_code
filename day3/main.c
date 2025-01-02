@@ -52,13 +52,9 @@ int main(void)
 		
 		if(result == 0)
 		{
-			if(old_num != first_number)
-			{
 				printf("first number : %d\n", first_number);
 				printf("second number : %d\n\n", second_number);
 				sum += multiply(first_number, second_number);
-			}
-			old_num = first_number;
 		}
 	}
 	printf("total sum : %d\n", sum);
