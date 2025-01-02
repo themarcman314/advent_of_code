@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 int total_number_of_chars(FILE *f);
-int *find_char_sequences(char *);
-int multiply(int *);
-int add_total(int *);
+int is_digit(char c);
+int str_to_int(const char *str, int idx);
+int parse_mul(const char *data, const int idx, int *first_number, int *second_number);
+int multiply(int, int);
 
 int main(void)
 {
@@ -28,24 +30,45 @@ int main(void)
 	{
 		data[i] = fgetc(f);
 	}
-	// print array to stdout
-	for (int i = 0; i < total_num_of_chars; i++) 
-	{
-		printf("%c",data[i]);
-	}
-
-	printf("\n");
-	printf("\n");
-	printf("\n");
-
-	find_char_sequences(data);
-
-
-
 	fclose(f);
+
+
+	// print array to stdout
+	//printf("%s",data);
+	
+	int first_number = 0;
+	int second_number = 0;
+	int old_num = 0;
+	
+	int index = 0;
+
+	int result = -3;
+
+	int sum = 0;
+	
+	for(int idx = 0; idx < total_num_of_chars; idx++)
+	{
+		result = parse_mul(data, idx, &first_number, &second_number);
+		
+		if(result == 0)
+		{
+			if(old_num != first_number)
+			{
+				printf("first number : %d\n", first_number);
+				printf("second number : %d\n\n", second_number);
+				sum += multiply(first_number, second_number);
+			}
+			old_num = first_number;
+		}
+	}
+	printf("total sum : %d\n", sum);
+	
+
+
+
+
 	return 0;
 }
-
 
 int total_number_of_chars(FILE *f)
 {
@@ -60,54 +83,65 @@ int total_number_of_chars(FILE *f)
 	fseek(f, 0, SEEK_SET);
 	return number_of_chars;
 }
-
-int *find_char_sequences(char *data)
+int is_digit(char c)
 {
-	char sequence[] = "mul(";
-	int char_in_seq = 0;
-	int rank_of_first_num = 0;
-	int index = 0;
-	int size_of_num = 0;
+	return c >= '0' && c <= '9';
+}
+int str_to_int(const char *str, int idx)
+{
+	int result = 0;
 
-
-	// look for sequence for every character
-	for (int i = 0; i < strlen(data)-sizeof(sequence); i++)
+	while(is_digit(str[idx]))
 	{
-		for(char_in_seq = 0; char_in_seq < sizeof(sequence)-1; char_in_seq++)
-		{
-			if(data[i+char_in_seq] != sequence[char_in_seq])
-			{
-				printf("nothing here\n");
-				break;
-			}
-			else
-			{
-				printf("found character : '%c'\n", sequence[char_in_seq]);
-			}
-		}
-		// if "mul(" detected
-		if(char_in_seq == sizeof(sequence)-1)
-		{
-			rank_of_first_num = i+char_in_seq;
-			printf("first number positioned at %d\n", rank_of_first_num);
-			while(data[rank_of_first_num+index] != ',')
-			{
-				printf("character found : %c\n",data[rank_of_first_num+index]);
-				index++;
-			}
-			size_of_num = index;
-			index = 0;
-			printf("size of first number : %d\n",size_of_num);
-			while(data[rank_of_first_num+size_of_num+index+1] != ')')
-			{
-				printf("character found : %c\n",data[rank_of_first_num+size_of_num+index+1]);
-				index++;
-			}
-			size_of_num = index;
-			printf("size of second number : %d\n",size_of_num);
-			size_of_num = 0;
-			index = 0;
-		}
+		result = result*10 + str[idx] - '0';
+		idx++;
 	}
-	return NULL;
+	return result;
+}
+int parse_mul(const char *data, const int idx, int *first_number, int *second_number)
+{
+	int potential_first_number = 0;
+	int potential_second_number = 0;
+
+	// detect basic patern
+	if(data[idx] != 'm' ||data[idx+1] != 'u' ||data[idx+2] != 'l' ||data[idx+3] != '(')
+		return -1;
+	int first_number_idx = idx+4;
+	//printf("first number idx : %d\n", first_number_idx);
+	potential_first_number = str_to_int(data, first_number_idx);
+
+	// safety checks
+	if(potential_first_number < 1)
+		return -1;
+	int size_of_number = (int)(log10(potential_first_number)+1);
+	if(size_of_number > 3)
+		return -1;
+
+	// if there isnt a ',' immediately after the first number return error
+	if(data[first_number_idx+size_of_number] != ',')
+		return -1;
+
+	int second_number_idx = first_number_idx+size_of_number+1;
+	//printf("second number idx : %d\n", second_number_idx);
+	potential_second_number = str_to_int(data, second_number_idx);
+	
+	// safety checks
+	if(potential_second_number < 1)
+		return -1;
+	size_of_number = (int)(log10(potential_second_number)+1);
+	if(size_of_number > 3)
+		return -1;
+	
+	// if there isnt a ')' immediately after the second number return error
+	if(data[second_number_idx+size_of_number] != ')')
+		return -1;
+
+	*first_number = potential_first_number;
+	*second_number = potential_second_number;
+
+	return 0;
+}
+int multiply(int a, int b)
+{
+	return a*b;
 }
