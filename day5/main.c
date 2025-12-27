@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ansi_color.h"
+#include <stdbool.h>
 	
 /*
  * Start by identifying which updates are in the correct order.
@@ -12,8 +13,8 @@
 void parse_file_into_rule_array(FILE *f, int number_of_rules, int char_rule_size, int rules[number_of_rules][2]);
 
 int main(void) {
-	//FILE *f = fopen("./input", "r");
-	FILE *f = fopen("./smallexample", "r");
+	FILE *f = fopen("./input", "r");
+	//FILE *f = fopen("./smallexample", "r");
 	if (f == NULL) {
 		return -1;
 	}
@@ -58,8 +59,11 @@ int main(void) {
 	// numbers are 2 digits long
 	// number of numbers = strlen/3
 	int line = 0;
+	int sum = 0;
+	fgets(changes_data, maxsizeline, f); // skip over empty line
 	while(fgets(changes_data, maxsizeline, f) != NULL)
 	{
+		int correct = true;
 		printf("rule line number %d\n", line++);
 		int numbers[strlen(changes_data)/3];
 		//printf("size of numbers: %d\n", sizeof(numbers)/sizeof(int));
@@ -73,8 +77,8 @@ int main(void) {
 			numbers[i++] = atoi(pagestring);
 		}
 		int number_of_numbers = sizeof(numbers)/sizeof(int);
-		//for(int a =0; a < number_of_numbers; a++)printf("%d\n", numbers[a]);
-		//printf("\n");
+		for(int a =0; a < number_of_numbers; a++)printf("%d ", numbers[a]);
+		printf("\n");
 		for(int n = 0; n < number_of_numbers; n++)
 		{
 			for (int r = 0; r < number_of_rules ; r++) {
@@ -83,16 +87,24 @@ int main(void) {
 				//printf("\t%d : %d\n", numbers[n], second_page_number);
 				if(numbers[n] == second_page_number)
 				{
-					printf("\tfound second rule\n");
+					//printf("\tfound second rule\n");
 					for (int remaining = n+1; remaining < number_of_numbers; remaining++) {
-						printf("\t%d-%d\n", numbers[remaining], order_rules_num[r][0]);
-						if(numbers[remaining] == order_rules_num[r][0]) printf(RED"\tnot in order\n"reset);
+						//printf("\t%d-%d\n", numbers[remaining], order_rules_num[r][0]);
+						if(numbers[remaining] == order_rules_num[r][0]) {
+							correct = false;
+							printf(RED"\tnot in order\n"reset);
+						}
 					}
 				}
-			
 			}
 		}
+		if (correct) {
+			printf(GRN"\tmiddle number: %d\n"reset, numbers[number_of_numbers/2]);
+			sum += numbers[number_of_numbers/2];
+		
+		}
 	}
+	printf("total sum = %d\n", sum);
 
 	
 	
