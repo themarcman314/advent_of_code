@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ansi_color.h"
 #include <stdbool.h>
 	
 /*
@@ -16,7 +15,7 @@ void parse_file_into_rule_array(FILE *f, int number_of_rules, int char_rule_size
 
 int main(void) {
 	FILE *f = fopen("./input", "r");
-	//FILE *f = fopen("./smallexample", "r");
+	//FILE *f = fopen("./smallinput", "r");
 	if (f == NULL) {
 		return -1;
 	}
