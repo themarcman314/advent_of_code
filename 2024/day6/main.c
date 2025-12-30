@@ -10,6 +10,14 @@ void lab_map_determine_dimention(FILE *f, int *width, int *length);
 void lab_map_load_from_file(FILE *f, const int width, const int length, char map[length][width]);
 void lab_map_print(const int width, const int length, char map[][width]);
 void lab_map_find_initial_position(int *x, int *y, const int width, const int length, char map[length][width]);
+void lab_map_copy(const int width, const int length, char map[length][width], char new_map[length][width]);
+
+enum direction {
+	NORTH,
+	SOUTH,
+	EAST,
+	WEST
+};
 
 
 int main(void) {
@@ -28,6 +36,20 @@ int main(void) {
 	int x,y;
 	lab_map_find_initial_position(&x, &y, w, l, map);
 	printf("x: %d\ny: %d\n", x, y);
+
+	char guarded_map[l][w];
+	lab_map_copy(w, l, map, guarded_map);
+	printf("guarded map:\n");
+	lab_map_print(w, l, guarded_map);
+
+	int dir = NORTH; // assume initial direction is north
+	//while (map[y][x] != '#') {
+	//	// need to track uniqueness since guard can walk over same square more than once
+	//	
+	//	if(x < 0 || x >= (w - 2) || y < 0 || y >= l) // if out of bounds stop
+	//		break;
+	//
+	//}
 	
 
 	fclose(f);
@@ -78,3 +100,10 @@ void lab_map_find_initial_position(int *x, int *y, const int width, const int le
 	}
 }
 
+void lab_map_copy(const int width, const int length, char map[length][width], char new_map[length][width]) {
+	for(int l = 0; l < width; l++) {
+		for(int w = 0; w < width; w++) {
+			new_map[l][w] = map[l][w];
+		}
+	}
+}
