@@ -8,7 +8,8 @@
 void print_file(FILE *f);
 void lab_map_determine_dimention(FILE *f, int *width, int *length);
 void lab_map_load_from_file(FILE *f, const int width, const int length, char map[length][width]);
-void lab_map_print(int width, int length, char map[][width]);
+void lab_map_print(const int width, const int length, char map[][width]);
+void lab_map_find_initial_position(int *x, int *y, const int width, const int length, char map[length][width]);
 
 
 int main(void) {
@@ -17,15 +18,17 @@ int main(void) {
 	if (f == NULL) {
 		return -1;
 	}
-	print_file(f);
 	int w;
 	int l;
 	lab_map_determine_dimention(f, &w, &l);
 	w += 2; // account for '\n' and '\0'
 	char map[l][w];
 	lab_map_load_from_file(f, w, l, map);
-	printf("\n\n");
 	lab_map_print(w, l, map);
+	int x,y;
+	lab_map_find_initial_position(&x, &y, w, l, map);
+	printf("x: %d\ny: %d\n", x, y);
+	
 
 	fclose(f);
 	return 0;
@@ -37,13 +40,12 @@ void print_file(FILE *f) {
 	while ((c = getc(f)) != EOF) { putchar(c); }
 }
 
-void lab_map_print(int width, int length, char map[][width])
+void lab_map_print(const int width, const int length, char map[][width])
 {
 	for (int l = 0 ; l < length; l++) {
 		printf("%s", map[l]);
 	}
 }
-
 void lab_map_determine_dimention(FILE *f, int *width, int *length) {
 	*width = 0;
 	*length = 0;
@@ -64,3 +66,15 @@ void lab_map_load_from_file(FILE *f, const int width, const int length, char map
 		fgets(map[l], width, f);
 	}
 }
+void lab_map_find_initial_position(int *x, int *y, const int width, const int length, char map[length][width]) {
+	for(int l = 0; l < length; l++) {
+		for(int w = 0; w < width; w++) {
+			if( map[l][w] == '^') {
+				*x = w;
+				*y = l;
+				return;
+			}
+		}
+	}
+}
+
