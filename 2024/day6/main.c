@@ -7,7 +7,7 @@
 
 void print_file(FILE *f);
 void lab_map_determine_dimention(FILE *f, int *width, int *length);
-void lab_map_load_from_file(FILE *f, const int width, const int length, int map[length][width]);
+void lab_map_load_from_file(FILE *f, const int width, const int length, char map[length][width]);
 
 
 int main(void) {
@@ -20,7 +20,8 @@ int main(void) {
 	int w;
 	int l;
 	lab_map_determine_dimention(f, &w, &l);
-	printf("width: %d\nlength: %d\n", w, l);
+	char map[l][w];
+	lab_map_load_from_file(f, w, l, map);
 
 	fclose(f);
 	return 0;
@@ -46,5 +47,5 @@ void lab_map_determine_dimention(FILE *f, int *width, int *length) {
 	}
 }
 
-void lab_map_load_from_file(FILE *f, const int width, const int length, int map[length][width]) {
+void lab_map_load_from_file(FILE *f, const int width, const int length, char map[length][width]) {
 }
