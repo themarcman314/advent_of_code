@@ -14,6 +14,7 @@ void lab_map_load_from_file(FILE *f, const int width, const int length, char map
 void lab_map_print(const int width, const int length, char map[][width]);
 void lab_map_find_initial_position(int *x, int *y, const int width, const int length, char map[length][width]);
 void lab_map_copy(const int width, const int length, const char map[length][width], char new_map[length][width]);
+void lab_map_count_visited(int *count, const int width, const int length, const char map[length][width]);
 
 enum direction {
 	NORTH,
@@ -24,8 +25,8 @@ enum direction {
 
 
 int main(void) {
-	FILE *f = fopen("./smallinput", "r");
-	//FILE *f = fopen("./input", "r");
+	//FILE *f = fopen("./smallinput", "r");
+	FILE *f = fopen("./input", "r");
 	if (f == NULL) {
 		return -1;
 	}
@@ -53,10 +54,12 @@ int main(void) {
 	int new_y = y--;
 	
 
-	//while(!(x < 0 || x >= (w - 2) || y < 0 || y >= l)) { // if out of bounds stop
-	for (int i = 0; i < 11; i++) {
+	while(1) { // if out of bounds stop
 	
 		while (map[new_y][new_x] != '#') {
+			if(!(new_x >= 0 && new_x < (w - 2) && new_y >= 0 && new_y < l))
+				goto end_loops; // break out of both
+			printf("w to (%d, %d)\n", new_x,new_y);
 			guarded_map[new_y][new_x] = 'X';
 			x = new_x;
 			y = new_y;
@@ -109,10 +112,14 @@ int main(void) {
 	}
 
 
-	//printf("x: %d\ny: %d\n", x, y);
+
+end_loops:
 
 	printf("\nguarded map:\n");
 	lab_map_print(w, l, guarded_map);
+	int count;
+	lab_map_count_visited(&count, w, l, guarded_map);
+	printf("Total count: %d\n", count);
 
 
 	return 0;
@@ -178,6 +185,15 @@ void lab_map_copy(const int width, const int length, const char map[length][widt
 	for(int l = 0; l < length; l++) {
 		for(int w = 0; w < width; w++) {
 			new_map[l][w] = map[l][w];
+		}
+	}
+}
+void lab_map_count_visited(int *count, const int width, const int length, const char map[length][width]) {
+	*count = 0;
+	for (int l = 0; l < length; l++) {
+		for (int w = 0; w < width; w++) {
+			if(map[l][w] == 'X')
+				(*count)++;
 		}
 	}
 }
