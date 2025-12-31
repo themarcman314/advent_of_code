@@ -49,28 +49,70 @@ int main(void) {
 	//lab_map_print(w, l, guarded_map);
 
 	int dir = NORTH; // assume initial direction is north
-	//printf("\n\nx=4, y=0, char: %c\n\n", map[1][4]);
-	//while (map[y][x] != '#') {
-	//	printf("character: %c\n", map[y][x]);
-	//	printf("x: %d y: %d\n", x, y);
-	//	switch (dir) {
-	//		case NORTH:
-	//			y--;
-	//			break;
-	//		case SOUTH:
-	//			break;
-	//		case EAST:
-	//			break;
-	//		case WEST:
-	//			break;
-	//	}
-	//	if(x < 0 || x >= (w - 2) || y < 0 || y >= l) // if out of bounds stop
-	//		break;
-	//}
+	int new_x = x;
+	int new_y = y--;
+	
+
+	//while(!(x < 0 || x >= (w - 2) || y < 0 || y >= l)) { // if out of bounds stop
+	for (int i = 0; i < 11; i++) {
+	
+		while (map[new_y][new_x] != '#') {
+			guarded_map[new_y][new_x] = 'X';
+			x = new_x;
+			y = new_y;
+			switch (dir) {
+				case NORTH:
+					new_y--;
+					break;
+				case SOUTH:
+					new_y++;
+					break;
+				case EAST:
+					new_x++;
+					break;
+				case WEST:
+					new_x--;
+					break;
+			}
+		}
+		
+		printf("x: %d\ny: %d\n", x, y);
+		switch (dir) { // turn right
+			case NORTH:
+				x++;
+				new_x = x;
+				new_y = y;
+				dir = EAST;
+				break;
+			case SOUTH:
+				x--;
+				new_x = x;
+				new_y = y;
+				dir = WEST;
+				break;
+			case EAST:
+				y++;
+				new_x = x;
+				new_y = y;
+				dir = SOUTH;
+				break;
+			case WEST:
+				y--;
+				new_x = x;
+				new_y = y;
+				dir = NORTH;
+				break;
+		}
+		printf("new x: %d new y: %d\n", new_x, new_y);
+
+		printf("direction: %d\n", dir);
+	}
 
 
-	printf("\n\n");
-	lab_map_print(w, l, map);
+	//printf("x: %d\ny: %d\n", x, y);
+
+	printf("\nguarded map:\n");
+	lab_map_print(w, l, guarded_map);
 
 
 	return 0;
